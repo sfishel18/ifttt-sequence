@@ -45,7 +45,7 @@ test("bad request if command is invalid", () => {
     .catch(error => {
       expect(error.response.status).toEqual(400);
       expect(error.response.data).toMatchInlineSnapshot(
-        `"Command \\"invalid is not supported"`
+        `"Command \\"invalid\\" is not supported"`
       );
     });
 });
