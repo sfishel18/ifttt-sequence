@@ -1,0 +1,33 @@
+{
+  "name": "ifttt-sequence",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:functions\" \"npm run start:firestore\"",
+    "start:functions": "touch .env && . ./.env && AUTH_KEY=$AUTH_KEY FIRESTORE_EMULATOR_HOST=localhost:8081 functions-framework --source ./index.js --target index",
+    "start:firestore": "gcloud --quiet beta emulators firestore start --host-port=localhost:8081",
+    "test": "touch .env && . ./.env && AUTH_KEY=$AUTH_KEY jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sfishel18/ifttt-sequence.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sfishel18/ifttt-sequence/issues"
+  },
+  "homepage": "https://github.com/sfishel18/ifttt-sequence#readme",
+  "dependencies": {
+    "@google-cloud/firestore": "^3.5.1",
+    "axios": "^0.19.2"
+  },
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^1.4.0",
+    "concurrently": "^5.1.0",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "wait-on": "^4.0.1"
+  }
+}

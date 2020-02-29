@@ -1,0 +1,44 @@
+name: CI
+
+on: [push]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    container: google/cloud-sdk
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install Libraries and Dependencies
+        run: |
+          curl -sL https://deb.nodesource.com/setup_10.x | bash -
+          apt-get install -y google-cloud-sdk-firestore-emulator nodejs procps
+          npm install
+
+      - name: Run tests
+        env:
+          AUTH_KEY: ${{ secrets.AUTH_KEY }}
+        run: ./node_modules/.bin/concurrently -k --success first "npm run start:functions" "npm run start:firestore" "npm run test"
+
+
+  Deploy:
+    runs-on: ubuntu-latest
+    container: google/cloud-sdk:alpine
+    needs: Test
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Init Gcloud CLI
+        env:
+          GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}
+        run: |
+          echo ${GCLOUD_SERVICE_KEY} > ./keyfile.json
+          gcloud auth activate-service-account --key-file ./keyfile.json
+
+      - name: Deploy Cloud Functions
+        env:
+          AUTH_KEY: ${{ secrets.AUTH_KEY }}
+        run: |
+          gcloud functions deploy action --project ifttt-sequence --runtime nodejs10 --entry-point index --trigger-http --allow-unauthenticated --set-env-vars AUTH_KEY=$AUTH_KEY
