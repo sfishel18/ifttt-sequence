@@ -65,4 +65,192 @@ test("bad request if webhooks is missing", () => {
     });
 });
 
-// test("next command")
+const testWebooks = [
+  "https://postman-echo.com/response-headers?dog=Salvador",
+  "https://postman-echo.com/response-headers?dog=Rosa",
+  "https://postman-echo.com/response-headers?dog=Valentine"
+];
+
+test("next command", async () => {
+  const id = `next-command-test-${Date.now()}`;
+  expect.assertions(8);
+
+  const firstResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(firstResponse.status).toEqual(200);
+  expect(firstResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+
+  const secondResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(secondResponse.status).toEqual(200);
+  expect(secondResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Rosa",
+}
+`);
+
+  const thirdResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(thirdResponse.status).toEqual(200);
+  expect(thirdResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Valentine",
+}
+`);
+
+  const fourthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(fourthResponse.status).toEqual(200);
+  expect(fourthResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+});
+
+test("previous command", async () => {
+  const id = `previous-command-test-${Date.now()}`;
+  expect.assertions(10);
+
+  const firstResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "previous",
+    webhooks: testWebooks
+  });
+  expect(firstResponse.status).toEqual(200);
+  expect(firstResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Valentine",
+}
+`);
+
+  const secondResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "previous",
+    webhooks: testWebooks
+  });
+  expect(secondResponse.status).toEqual(200);
+  expect(secondResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Rosa",
+}
+`);
+
+  const thirdResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "previous",
+    webhooks: testWebooks
+  });
+  expect(thirdResponse.status).toEqual(200);
+  expect(thirdResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+
+  const fourthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "previous",
+    webhooks: testWebooks
+  });
+  expect(fourthResponse.status).toEqual(200);
+  expect(fourthResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Valentine",
+}
+`);
+
+  const fifthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "previous",
+    webhooks: testWebooks
+  });
+  expect(fifthResponse.status).toEqual(200);
+  expect(fifthResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Rosa",
+}
+`);
+});
+
+test("repeat command", async () => {
+  const id = `repeat-command-test-${Date.now()}`;
+  expect.assertions(8);
+
+  const firstResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(firstResponse.status).toEqual(200);
+  expect(firstResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+
+  const secondResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "repeat",
+    webhooks: testWebooks
+  });
+  expect(secondResponse.status).toEqual(200);
+  expect(secondResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+
+  const thirdResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(thirdResponse.status).toEqual(200);
+  expect(thirdResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Rosa",
+}
+`);
+
+  const fourthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "repeat",
+    webhooks: testWebooks
+  });
+  expect(fourthResponse.status).toEqual(200);
+  expect(fourthResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Rosa",
+}
+`);
+});
