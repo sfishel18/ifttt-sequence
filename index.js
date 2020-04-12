@@ -10,9 +10,11 @@ const db = new Firestore({
 });
 
 const supportedCommands = [
+    'advance',
     'next',
     'previous',
     'repeat',
+    'retreat'
 ]
 
 exports.index = (req, res) => {
@@ -41,13 +43,15 @@ exports.index = (req, res) => {
     .then(snapshot => {
         let index = snapshot.exists ? snapshot.get('index') : -1;
         let newIndex = index;
-        if (command === 'next') {
+        if (command === 'next' || command === 'advance') {
             newIndex = (index + 1) % webhooks.length;
-        } else if (command === 'previous') {
+        } else if (command === 'previous' || command === 'retreat') {
             newIndex = index <= 0 ? webhooks.length - 1 : index - 1
         }
         return Promise.all([
-            axios.get(webhooks[newIndex]).then(response => stringify(response.data)),
+            command === 'advance' || command === 'retreat' ? 
+              Promise.resolve() : 
+              axios.get(webhooks[newIndex]).then(response => stringify(response.data)),
             newIndex === index ? 
                 Promise.resolve() : 
                 db.doc(`sequences/${encodeURIComponent(id)}`).set({

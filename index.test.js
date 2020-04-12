@@ -254,3 +254,78 @@ Object {
 }
 `);
 });
+
+const testWebooksWithError = [
+  "https://postman-echo.com/response-headers?dog=Salvador",
+  "https://echo.getpostman.com/status/404",
+  "https://postman-echo.com/response-headers?dog=Valentine"
+];
+
+test("advance and retreat commands", async () => {
+  const id = `advance-retreat-commands-test-${Date.now()}`;
+  const firstResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooksWithError
+  });
+  expect(firstResponse.status).toEqual(200);
+  expect(firstResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+
+  const secondResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "advance",
+    webhooks: testWebooksWithError
+  });
+  expect(secondResponse.status).toEqual(200);
+  expect(secondResponse.data).toMatchInlineSnapshot(`""`);
+
+  const thirdResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooksWithError
+  });
+  expect(thirdResponse.status).toEqual(200);
+  expect(thirdResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Valentine",
+}
+`);
+
+  const fourthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "retreat",
+    webhooks: testWebooksWithError
+  });
+  expect(fourthResponse.status).toEqual(200);
+  expect(fourthResponse.data).toMatchInlineSnapshot(`""`);
+
+  const fifthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "retreat",
+    webhooks: testWebooksWithError
+  });
+  expect(fifthResponse.status).toEqual(200);
+  expect(fifthResponse.data).toMatchInlineSnapshot(`""`);
+
+  const sixthResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "repeat",
+    webhooks: testWebooksWithError
+  });
+  expect(sixthResponse.status).toEqual(200);
+  expect(sixthResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+});
