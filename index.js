@@ -14,6 +14,7 @@ const supportedCommands = [
     'next',
     'previous',
     'repeat',
+    'reset',
     'retreat'
 ]
 
@@ -43,7 +44,9 @@ exports.index = (req, res) => {
     .then(snapshot => {
         let index = snapshot.exists ? snapshot.get('index') : -1;
         let newIndex = index;
-        if (command === 'next' || command === 'advance') {
+        if (command === 'reset') {
+          newIndex = 0;
+        } else if (command === 'next' || command === 'advance') {
             newIndex = (index + 1) % webhooks.length;
         } else if (command === 'previous' || command === 'retreat') {
             newIndex = index <= 0 ? webhooks.length - 1 : index - 1

@@ -255,6 +255,50 @@ Object {
 `);
 });
 
+test("reset command", async () => {
+  const id = `reset-command-test-${Date.now()}`;
+  expect.assertions(6);
+
+  const firstResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(firstResponse.status).toEqual(200);
+  expect(firstResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+
+  const secondResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "next",
+    webhooks: testWebooks
+  });
+  expect(secondResponse.status).toEqual(200);
+  expect(secondResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Rosa",
+}
+`);
+
+  const thirdResponse = await axios.post(`${API_URL}/action`, {
+    auth: process.env.AUTH_KEY,
+    id,
+    command: "reset",
+    webhooks: testWebooks
+  });
+  expect(thirdResponse.status).toEqual(200);
+  expect(thirdResponse.data).toMatchInlineSnapshot(`
+Object {
+  "dog": "Salvador",
+}
+`);
+});
+
 const testWebooksWithError = [
   "https://postman-echo.com/response-headers?dog=Salvador",
   "https://echo.getpostman.com/status/404",
@@ -263,6 +307,7 @@ const testWebooksWithError = [
 
 test("advance and retreat commands", async () => {
   const id = `advance-retreat-commands-test-${Date.now()}`;
+  expect.assertions(12);
   const firstResponse = await axios.post(`${API_URL}/action`, {
     auth: process.env.AUTH_KEY,
     id,
