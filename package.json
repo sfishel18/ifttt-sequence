@@ -21,7 +21,7 @@
   "homepage": "https://github.com/sfishel18/ifttt-sequence#readme",
   "dependencies": {
     "@google-cloud/firestore": "^3.5.1",
-    "axios": "^0.19.2"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.4.0",
